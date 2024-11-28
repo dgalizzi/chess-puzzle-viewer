@@ -4,41 +4,56 @@ import { Chess } from "chessops/chess";
 import { Api as CgApi } from "chessground/api";
 
 export class PromotionHandler {
-  private _promotion: {
+  private _promotion?: {
     dest: Key;
     color: Color;
     resolve: (value: Role | null) => void;
-  } | null = null;
+  };
+  private _isPromotionOpen = false;
 
   constructor(private readonly redraw: () => void) {}
 
-  public get promotion(): {
-    dest: Key;
-    color: Color;
-    resolve: (value: Role | null) => void;
-  } | null {
+  public get promotion():
+    | {
+        dest: Key;
+        color: Color;
+        resolve: (value: Role | null) => void;
+      }
+    | undefined {
     return this._promotion;
   }
 
   public set promotion(
-    value: {
-      dest: Key;
-      color: Color;
-      resolve: (value: Role | null) => void;
-    } | null,
+    value:
+      | {
+          dest: Key;
+          color: Color;
+          resolve: (value: Role | null) => void;
+        }
+      | undefined,
   ) {
     this._promotion = value;
   }
 
-  public async promptPromotion(dest: Key, color: Color): Promise<Role | null> {
+  public isOpen(): boolean {
+    return this._isPromotionOpen;
+  }
+
+  public close() {
+    this._isPromotionOpen = false;
+  }
+
+  public async open(dest: Key, color: Color): Promise<Role | null> {
     // Wait for user to pick promotion piece
     const role: Role | null = await new Promise((resolve) => {
       this.promotion = { dest, color, resolve };
+      this._isPromotionOpen = true;
       this.redraw();
     });
 
     // Promotion ended
-    this.promotion = null;
+    this.close();
+    this.promotion = undefined;
     this.redraw();
     return role;
   }

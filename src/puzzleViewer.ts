@@ -61,7 +61,7 @@ export default class PuzzleViewer {
   }
 
   public isPromotionPromptOpened(): boolean {
-    return this.promotionHandler.promotion !== null;
+    return this.promotionHandler.isOpen();
   }
 
   public resolvePromotion(r: Role) {
@@ -109,7 +109,7 @@ export default class PuzzleViewer {
     piece: Piece,
     move: Move,
   ): Promise<void> {
-    const role = await this.promotionHandler.promptPromotion(dest, piece.color);
+    const role = await this.promotionHandler.open(dest, piece.color);
     if (role) {
       this.promotionHandler.applyPromotion(
         dest,
