@@ -26,7 +26,7 @@ Built with [Vite](https://vite.dev/).
 
 1. **Load Puzzle from PGN**: Initialize the board state from a PGN-formatted puzzle.
 2. **Move Validation Against PGN**: Reject incorrect user moves if they deviate from the puzzle solution.
-3. **Opponent moves**: Once a player makes the correct move, the opponent's move should be made automatically.
+3. **Opponent moves**: Once the player makes the correct move, the opponent's move should be made automatically.
 
 ---
 
