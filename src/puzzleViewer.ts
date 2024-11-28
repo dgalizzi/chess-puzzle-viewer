@@ -24,58 +24,11 @@ export default class PuzzleViewer {
     this.promotion = null;
   }
 
-  setGround(cg: CgApi) {
+  public setGround(cg: CgApi) {
     this.ground = cg;
   }
 
-  isPromotion(dest: Key, piece: Piece): boolean {
-    return (
-      piece.role == "pawn" &&
-      ((piece.color == "white" && dest[1] == "8") ||
-        (piece.color == "black" && dest[1] == "1"))
-    );
-  }
-
-  async promptPromotion(dest: Key, color: Color): Promise<Role | undefined> {
-    const role: Role | undefined = await new Promise((resolve) => {
-      this.promotion = { dest, color, resolve };
-      this.redraw();
-    });
-    this.promotion = null;
-    this.redraw();
-    return role;
-  }
-
-  getEnPassantCaptureSquare(
-    orig: string,
-    dest: string,
-    getPieceInSquare: (square: string) => Piece | undefined,
-  ): string | undefined {
-    const piece = getPieceInSquare(orig);
-
-    if (!piece || piece.role !== "pawn") {
-      return undefined;
-    }
-
-    const origFile = orig.charCodeAt(0);
-    const destFile = dest.charCodeAt(0);
-
-    // Check if the move is diagonal
-    if (Math.abs(origFile - destFile) === 1) {
-      // Check if the destination square is empty (indicating en passant)
-      if (getPieceInSquare(dest) === undefined) {
-        const destRank = parseInt(dest[1]);
-        const capturedRank =
-          piece.color === "white" ? destRank - 1 : destRank + 1;
-        const capturedSquare = String.fromCharCode(destFile) + capturedRank;
-        return capturedSquare;
-      }
-    }
-
-    return undefined; // Not an en passant capture
-  }
-
-  cgState(): Config {
+  public cgState(): Config {
     const pv = this;
     return {
       movable: {
@@ -107,6 +60,14 @@ export default class PuzzleViewer {
     this.makeMove(move);
   }
 
+  private isPromotion(dest: Key, piece: Piece): boolean {
+    return (
+      piece.role == "pawn" &&
+      ((piece.color == "white" && dest[1] == "8") ||
+        (piece.color == "black" && dest[1] == "1"))
+    );
+  }
+
   private handlePromotion(dest: Key, piece: Piece, move: Move): void {
     this.promptPromotion(dest, piece.color).then((role: Role | undefined) => {
       if (role !== undefined) {
@@ -116,6 +77,19 @@ export default class PuzzleViewer {
       }
       this.updateLegalMoves();
     });
+  }
+
+  private async promptPromotion(
+    dest: Key,
+    color: Color,
+  ): Promise<Role | undefined> {
+    const role: Role | undefined = await new Promise((resolve) => {
+      this.promotion = { dest, color, resolve };
+      this.redraw();
+    });
+    this.promotion = null;
+    this.redraw();
+    return role;
   }
 
   private applyPromotion(
@@ -134,7 +108,7 @@ export default class PuzzleViewer {
   }
 
   private resetToPreviousPosition(): void {
-    this.ground?.set({ fen: makeFen(this.pos.toSetup()) });
+    this.ground!.set({ fen: makeFen(this.pos.toSetup()) });
   }
 
   private handleEnPassant(orig: string, dest: string): void {
@@ -149,6 +123,35 @@ export default class PuzzleViewer {
         new Map([[enPassantSquareCapture as Key, undefined]]),
       );
     }
+  }
+
+  private getEnPassantCaptureSquare(
+    orig: string,
+    dest: string,
+    getPieceInSquare: (square: string) => Piece | undefined,
+  ): string | undefined {
+    const piece = getPieceInSquare(orig);
+
+    if (!piece || piece.role !== "pawn") {
+      return undefined;
+    }
+
+    const origFile = orig.charCodeAt(0);
+    const destFile = dest.charCodeAt(0);
+
+    // Check if the move is diagonal
+    if (Math.abs(origFile - destFile) === 1) {
+      // Check if the destination square is empty (indicating en passant)
+      if (getPieceInSquare(dest) === undefined) {
+        const destRank = parseInt(dest[1]);
+        const capturedRank =
+          piece.color === "white" ? destRank - 1 : destRank + 1;
+        const capturedSquare = String.fromCharCode(destFile) + capturedRank;
+        return capturedSquare;
+      }
+    }
+
+    return undefined; // Not an en passant capture
   }
 
   private makeMove(move: Move): void {
