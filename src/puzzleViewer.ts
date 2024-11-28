@@ -1,7 +1,7 @@
 import { Api as CgApi } from "chessground/api";
 import { Chess } from "chessops/chess";
 import { Config } from "chessground/config";
-import { makeFen } from "chessops/fen";
+import { makeFen, parseFen } from "chessops/fen";
 import { chessgroundDests } from "chessops/compat";
 import {
   Color,
@@ -17,15 +17,25 @@ export default class PuzzleViewer {
   ground?: CgApi;
   div?: HTMLElement;
   pos: Chess;
-  promotion: { dest: any; color: any; resolve: any } | null;
+  private _promotion: { dest: any; color: any; resolve: any } | null;
 
-  constructor(readonly redraw: () => void) {
-    this.pos = Chess.fromSetup(defaultSetup()).unwrap();
-    this.promotion = null;
+  constructor(
+    fen: string | undefined,
+    readonly redraw: () => void,
+  ) {
+    if (fen === "" || fen === undefined) {
+      this.pos = Chess.fromSetup(defaultSetup()).unwrap();
+    } else {
+      const setup = parseFen(fen).unwrap();
+      this.pos = Chess.fromSetup(setup).unwrap();
+    }
+    this._promotion = null;
   }
 
   public setGround(cg: CgApi) {
     this.ground = cg;
+
+    this.setBoardToPosition(true);
   }
 
   public cgState(): Config {
@@ -41,6 +51,14 @@ export default class PuzzleViewer {
         },
       },
     };
+  }
+
+  public get promotion(): { dest: any; color: any; resolve: any } | null {
+    return this._promotion;
+  }
+
+  public set promotion(value: { dest: any; color: any; resolve: any } | null) {
+    this._promotion = value;
   }
 
   private handleMove(orig: Key, dest: Key): void {
@@ -73,7 +91,7 @@ export default class PuzzleViewer {
       if (role !== undefined) {
         this.applyPromotion(dest, piece, role, move);
       } else {
-        this.resetToPreviousPosition();
+        this.setBoardToPosition();
       }
       this.updateLegalMoves();
     });
@@ -107,8 +125,16 @@ export default class PuzzleViewer {
     }
   }
 
-  private resetToPreviousPosition(): void {
+  private setBoardToPosition(disableAnimation: boolean = false): void {
+    if (disableAnimation) {
+      this.ground!.set({ animation: { enabled: false } });
+    }
+
     this.ground!.set({ fen: makeFen(this.pos.toSetup()) });
+
+    if (disableAnimation) {
+      this.ground!.set({ animation: { enabled: true } });
+    }
   }
 
   private handleEnPassant(orig: string, dest: string): void {

@@ -16,7 +16,10 @@ export default function start(element: HTMLElement): PuzzleViewer {
     eventListenersModule,
   ]);
 
-  const ctrl = new PuzzleViewer(redraw);
+  const ctrl = new PuzzleViewer(
+    "rn1qkbnr/pP2pppp/2b5/8/8/8/PPPP1PPP/RNBQKBNR w KQkq - 1 5",
+    redraw,
+  );
   const blueprint = view(ctrl);
   element.innerHTML = "";
   let vnode = patch(element, blueprint);
