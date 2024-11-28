@@ -1,0 +1,39 @@
+.cg-promotion {
+  pointer-events: none;
+  z-index: 20;
+}
+
+.cg-promotion cg-board {
+  transition-property: background;
+  transition-duration: 150ms;
+  cursor: initial;
+  pointer-events: initial;
+}
+
+.cg-promotion square:not(.last-move) {
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: #b0b0b0;
+  box-shadow: inset 0 0 25px 3px #808080;
+  transition-property: border-radius, box-shadow;
+  transition-duration: 150ms;
+}
+
+.cg-promotion square piece {
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  opacity: 1;
+  transform: scale(0.8);
+  transition-property: transform;
+  transition-duration: 150ms;
+}
+
+.cg-promotion square:hover {
+  box-shadow: inset 0 0 48px 8px #d64f00;
+  border-radius: 0%;
+}
+
+.cg-promotion square:hover piece {
+  transform: none;
+}
