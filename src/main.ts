@@ -23,7 +23,6 @@ export default function start(element: HTMLElement): PuzzleViewer {
   const blueprint = view(ctrl);
   element.innerHTML = "";
   let vnode = patch(element, blueprint);
-  ctrl.div = vnode.elm as HTMLElement;
 
   function redraw() {
     vnode = patch(vnode, view(ctrl));
