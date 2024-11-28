@@ -35,7 +35,7 @@ export default class PuzzleViewer {
         free: false,
         dests: chessgroundDests(pv.pos),
         events: {
-          after(orig, dest, metadata) {
+          after(orig, dest, _) {
             pv.handleMove(orig, dest);
           },
         },
