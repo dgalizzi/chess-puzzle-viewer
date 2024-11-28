@@ -34,10 +34,13 @@ export class PromotionHandler {
     dest: Key,
     color: Color,
   ): Promise<Role | undefined> {
+    // Wait for user to pick promotion piece
     const role: Role | undefined = await new Promise((resolve) => {
       this.promotion = { dest, color, resolve };
       this.redraw();
     });
+
+    // Promotion ended
     this.promotion = null;
     this.redraw();
     return role;

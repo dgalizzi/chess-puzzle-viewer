@@ -16,10 +16,10 @@ export default function view(ctrl: PuzzleViewer) {
         tabindex: 0,
       },
       class: {
-        darken: ctrl.promotion !== null,
+        darken: ctrl.isPromotionPromptOpened(),
       },
       on: {
-        click: () => ctrl.promotion?.resolve(undefined),
+        click: () => ctrl.resolvePromotion(undefined),
       },
       hook: onInsert((el: HTMLElement) => {
         ctrl.setGround(
@@ -41,17 +41,20 @@ const renderBoard = (ctrl: PuzzleViewer): VNode =>
       "div.cg-wrap",
       {
         class: {
-          "cg-promotion": ctrl.promotion !== null,
-          "cg-promotion--open": ctrl.promotion !== null,
+          "cg-promotion": ctrl.isPromotionPromptOpened(),
+          "cg-promotion--open": ctrl.isPromotionPromptOpened(),
         },
       },
-      ctrl.promotion ? renderPromotion(ctrl) : undefined,
+      ctrl.isPromotionPromptOpened() ? renderPromotion(ctrl) : undefined,
     ),
   );
 
 const renderPromotion = (ctrl: PuzzleViewer): VNode[] => {
   const kPromotionRoles: Role[] = ["queen", "knight", "rook", "bishop"];
-  const { dest, color, resolve } = ctrl.promotion!;
+
+  const dest = ctrl.getPromotionDest();
+  const color = ctrl.getPromotionColor();
+
   const orientation = ctrl.cgState().orientation;
   let left = dest.charCodeAt(0) - "a".charCodeAt(0);
   let top = color == "white" ? 0 : 7;
@@ -61,6 +64,7 @@ const renderPromotion = (ctrl: PuzzleViewer): VNode[] => {
     top = 7 - top;
     topStep *= -1;
   }
+
   let roles: VNode[] = kPromotionRoles.map((role, i) =>
     h(
       "cg-board",
@@ -71,7 +75,7 @@ const renderPromotion = (ctrl: PuzzleViewer): VNode[] => {
             top: `${(top + i * topStep) * 12.5}%`,
             left: `${left * 12.5}%`,
           },
-          on: { click: () => resolve(role) },
+          on: { click: () => ctrl.resolvePromotion(role) },
         },
         h(`piece.${color}.${role}`),
       ),

@@ -3,14 +3,7 @@ import { Chess } from "chessops/chess";
 import { Config } from "chessground/config";
 import { makeFen, parseFen } from "chessops/fen";
 import { chessgroundDests } from "chessops/compat";
-import {
-  Color,
-  defaultSetup,
-  Move,
-  parseSquare,
-  parseUci,
-  Role,
-} from "chessops";
+import { defaultSetup, Move, parseSquare, parseUci, Role } from "chessops";
 import { Key, Piece } from "chessground/types";
 import { PromotionHandler } from "./promotionHandler";
 
@@ -50,14 +43,6 @@ export default class PuzzleViewer {
     };
   }
 
-  public get promotion(): {
-    dest: Key;
-    color: Color;
-    resolve: (value: Role | undefined) => void;
-  } | null {
-    return this.promotionHandler.promotion;
-  }
-
   private handleMove(orig: Key, dest: Key): void {
     const uciMove = `${orig}${dest}`;
     const move = parseUci(uciMove);
@@ -73,6 +58,40 @@ export default class PuzzleViewer {
 
     this.handleEnPassant(orig, dest);
     this.makeMove(move);
+  }
+
+  public isPromotionPromptOpened(): boolean {
+    return this.promotionHandler.promotion !== null;
+  }
+
+  public resolvePromotion(r: Role | undefined) {
+    if (this.isPromotionPromptOpened()) {
+      return this.promotionHandler.promotion!.resolve(r);
+    }
+
+    throw new Error(
+      "Trying to resolve promotion when promotion prompt is not opened",
+    );
+  }
+
+  public getPromotionDest(): string {
+    if (this.isPromotionPromptOpened()) {
+      return this.promotionHandler.promotion!.dest;
+    }
+
+    throw new Error(
+      "Trying to get promotion dest when promotion prompt is not opened",
+    );
+  }
+
+  public getPromotionColor(): string {
+    if (this.isPromotionPromptOpened()) {
+      return this.promotionHandler.promotion!.color;
+    }
+
+    throw new Error(
+      "Trying to get promotion color when promotion prompt is not opened",
+    );
   }
 
   private async handlePromotion(
