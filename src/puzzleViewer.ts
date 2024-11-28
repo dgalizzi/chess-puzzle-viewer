@@ -64,9 +64,19 @@ export default class PuzzleViewer {
     return this.promotionHandler.promotion !== null;
   }
 
-  public resolvePromotion(r: Role | undefined) {
+  public resolvePromotion(r: Role) {
     if (this.isPromotionPromptOpened()) {
       return this.promotionHandler.promotion!.resolve(r);
+    }
+
+    throw new Error(
+      "Trying to resolve promotion when promotion prompt is not opened",
+    );
+  }
+
+  public cancelPromotion() {
+    if (this.isPromotionPromptOpened()) {
+      return this.promotionHandler.promotion!.resolve(null);
     }
 
     throw new Error(

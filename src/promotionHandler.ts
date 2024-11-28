@@ -7,7 +7,7 @@ export class PromotionHandler {
   private _promotion: {
     dest: Key;
     color: Color;
-    resolve: (value: Role | undefined) => void;
+    resolve: (value: Role | null) => void;
   } | null = null;
 
   constructor(private readonly redraw: () => void) {}
@@ -15,7 +15,7 @@ export class PromotionHandler {
   public get promotion(): {
     dest: Key;
     color: Color;
-    resolve: (value: Role | undefined) => void;
+    resolve: (value: Role | null) => void;
   } | null {
     return this._promotion;
   }
@@ -24,18 +24,15 @@ export class PromotionHandler {
     value: {
       dest: Key;
       color: Color;
-      resolve: (value: Role | undefined) => void;
+      resolve: (value: Role | null) => void;
     } | null,
   ) {
     this._promotion = value;
   }
 
-  public async promptPromotion(
-    dest: Key,
-    color: Color,
-  ): Promise<Role | undefined> {
+  public async promptPromotion(dest: Key, color: Color): Promise<Role | null> {
     // Wait for user to pick promotion piece
-    const role: Role | undefined = await new Promise((resolve) => {
+    const role: Role | null = await new Promise((resolve) => {
       this.promotion = { dest, color, resolve };
       this.redraw();
     });

@@ -18,9 +18,6 @@ export default function view(ctrl: PuzzleViewer) {
       class: {
         darken: ctrl.isPromotionPromptOpened(),
       },
-      on: {
-        click: () => ctrl.resolvePromotion(undefined),
-      },
       hook: onInsert((el: HTMLElement) => {
         ctrl.setGround(
           Chessground(
@@ -43,6 +40,14 @@ const renderBoard = (ctrl: PuzzleViewer): VNode =>
         class: {
           "cg-promotion": ctrl.isPromotionPromptOpened(),
           "cg-promotion--open": ctrl.isPromotionPromptOpened(),
+        },
+        on: {
+          click: () => {
+            // Clicking the main board cancels the promotion
+            if (ctrl.isPromotionPromptOpened()) {
+              ctrl.cancelPromotion();
+            }
+          },
         },
       },
       ctrl.isPromotionPromptOpened() ? renderPromotion(ctrl) : undefined,
