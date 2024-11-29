@@ -17,7 +17,7 @@ export default function start(element: HTMLElement): PuzzleViewer {
   ]);
 
   const ctrl = new PuzzleViewer(
-    "rn1qkbnr/pP2pppp/2b5/8/8/8/PPPP1PPP/RNBQKBNR w KQkq - 1 5",
+    "5r2/2R2P1k/7p/4q3/7K/8/6Q1/8 w - - 0 1",
     redraw,
   );
   const blueprint = view(ctrl);

@@ -93,6 +93,10 @@ function makeConfig(ctrl: PuzzleViewer, el: HTMLElement): Config {
   return {
     viewOnly: false,
     addDimensionsCssVarsTo: el,
+    animation: {
+      enabled: true,
+      duration: 300,
+    },
     drawable: {
       enabled: true,
       visible: true,

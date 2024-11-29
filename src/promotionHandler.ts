@@ -1,11 +1,11 @@
 import { Color, Role, Move } from "chessops";
 import { Key, Piece } from "chessground/types";
-import { Chess } from "chessops/chess";
 import { Api as CgApi } from "chessground/api";
 
 export class PromotionHandler {
   private _promotion?: {
     dest: Key;
+    orig: Key;
     color: Color;
     resolve: (value: Role | null) => void;
   };
@@ -16,6 +16,7 @@ export class PromotionHandler {
   public get promotion():
     | {
         dest: Key;
+        orig: Key;
         color: Color;
         resolve: (value: Role | null) => void;
       }
@@ -28,6 +29,7 @@ export class PromotionHandler {
       | {
           dest: Key;
           color: Color;
+          orig: Key;
           resolve: (value: Role | null) => void;
         }
       | undefined,
@@ -43,10 +45,10 @@ export class PromotionHandler {
     this._isPromotionOpen = false;
   }
 
-  public async open(dest: Key, color: Color): Promise<Role | null> {
+  public async open(dest: Key, orig: Key, color: Color): Promise<Role | null> {
     // Wait for user to pick promotion piece
     const role: Role | null = await new Promise((resolve) => {
-      this.promotion = { dest, color, resolve };
+      this.promotion = { dest, orig, color, resolve };
       this._isPromotionOpen = true;
       this.redraw();
     });
@@ -64,14 +66,12 @@ export class PromotionHandler {
     role: Role,
     move: Move,
     ground: CgApi,
-    pos: Chess,
   ): void {
     if ("promotion" in move) {
       move.promotion = role;
       piece.role = role;
       piece.promoted = true;
       ground.setPieces(new Map([[dest, piece]]));
-      pos.play(move);
     }
   }
 

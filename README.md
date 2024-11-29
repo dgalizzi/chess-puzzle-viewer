@@ -50,3 +50,4 @@ This project would not have been possible without the work of:
 - [chessground](https://github.com/lichess-org/chessground)
 - [chessops](https://github.com/niklasf/chessops)
 - [chessground-promotion](https://github.com/hi-ogawa/chessground-promotion)
+- [lila](https://github.com/lichess-org/lila)
