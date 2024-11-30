@@ -1,0 +1,7 @@
+.viewers {
+  margin: 1em;
+}
+
+.viewers > div {
+  max-width: 600px;
+}

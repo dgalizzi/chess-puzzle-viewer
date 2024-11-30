@@ -6,10 +6,12 @@
  */
 
 .cg-wrap {
-  width: 600px;
-  height: 600px;
+  box-sizing: content-box;
   position: relative;
   display: block;
+  height: 0;
+  padding-bottom: 100%;
+  width: 100%;
 }
 
 cg-helper {
