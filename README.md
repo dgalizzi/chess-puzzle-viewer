@@ -25,15 +25,26 @@ Built with [Vite](https://vite.dev/).
 
 ---
 
+## Non Goals
+
+- Engine Support
+- Variations Support
+
+---
+
 ## Usage
 
 ### Development Server
 
-To start a local development environment, run:
+To start a local development environment with a demo, run:
 
 ```bash
 npm run dev
 ```
+
+### As an NPM package
+
+(not yet)
 
 ---
 
