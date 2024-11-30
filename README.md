@@ -15,18 +15,18 @@ Built with [Vite](https://vite.dev/).
 
 ---
 
-## Features
+## Implemented Features
 
 - **Interactive Board**: Users can play moves directly on the board, with validation for legal moves.
 - **Special Rules Support**: Includes pawn promotion and en passant capture.
+- **Move Validation Against PGN**: Reject incorrect user moves if they deviate from the puzzle solution.
+- **Opponent moves**: Once the player makes the correct move, the opponent's move should be made automatically.
 
 ---
 
 ## Planned Features
 
 1. **Load Puzzle from PGN**: Initialize the board state from a PGN-formatted puzzle.
-2. **Move Validation Against PGN**: Reject incorrect user moves if they deviate from the puzzle solution.
-3. **Opponent moves**: Once the player makes the correct move, the opponent's move should be made automatically.
 
 ---
 
