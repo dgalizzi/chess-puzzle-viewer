@@ -13,6 +13,8 @@ import {
 } from "chessops";
 import { Key, Piece } from "chessground/types";
 import { PromotionHandler } from "./promotionHandler";
+import { Game, parsePgn, PgnNodeData, startingPosition } from "chessops/pgn";
+import { parseSan } from "chessops/san";
 
 export default class PuzzleViewer {
   private ground?: CgApi;
@@ -20,27 +22,46 @@ export default class PuzzleViewer {
   private promotionHandler: PromotionHandler;
   private puzzleMainMoves: NormalMove[];
   private currentPuzzleMove: number = 0;
+  private colorToPlay: "white" | "black";
 
   constructor(
-    fen: string | undefined,
+    pgn: string,
     readonly redraw: () => void,
   ) {
     this.promotionHandler = new PromotionHandler(redraw);
 
-    this.puzzleMainMoves = [
-      parseUci("g2g8") as NormalMove,
-      parseUci("f8g8") as NormalMove,
-      { ...(parseUci("f7f8") as NormalMove), promotion: "knight" },
-      parseUci("h7h8") as NormalMove,
-      parseUci("c7h7") as NormalMove,
-    ];
+    const games = parsePgn(pgn);
+    const game = games[0];
+    const pos = startingPosition(game.headers).unwrap();
+    this.puzzleMainMoves = [];
 
+    for (const node of game.moves.mainline()) {
+      const move = parseSan(pos, node.san);
+      if (!move) {
+        throw new Error(`Invalid move in pgn: ${node.san}`);
+      }
+      pos.play(move);
+      this.puzzleMainMoves.push(move as NormalMove);
+    }
+
+    const initialPosition = this.getInitialPosition(game);
+    this.pos = initialPosition.pos;
+    this.colorToPlay = initialPosition.color;
+  }
+
+  private getInitialPosition(game: Game<PgnNodeData>): {
+    pos: Chess;
+    color: "white" | "black";
+  } {
+    const fen = game.headers.get("FEN");
+    let pos;
     if (!fen) {
-      this.pos = Chess.fromSetup(defaultSetup()).unwrap();
+      pos = Chess.fromSetup(defaultSetup()).unwrap();
     } else {
       const setup = parseFen(fen).unwrap();
-      this.pos = Chess.fromSetup(setup).unwrap();
+      pos = Chess.fromSetup(setup).unwrap();
     }
+    return { pos: pos, color: pos.turn };
   }
 
   public setGround(cg: CgApi) {
@@ -50,6 +71,7 @@ export default class PuzzleViewer {
 
   public cgState(): Config {
     return {
+      orientation: this.colorToPlay,
       movable: {
         free: false,
         dests: chessgroundDests(this.pos),
