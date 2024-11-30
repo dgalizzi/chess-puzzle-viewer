@@ -34,5 +34,5 @@ start(
 );
 start(
   document.getElementById("puzzle2") as HTMLElement,
-  '[FEN "8/8/2pqp3/2Q2pkp/3P2p1/4P1P1/4KPP1/8 b - - 3 43"]\n\n Qxc5 dxc5 Kf6 f4 gxf3+ Kxf3 Ke5',
+  '[FEN "8/8/2pqp3/2Q2pkp/3P2p1/4P1P1/4KPP1/8 b - - 3 43"]\n\n Qxc5 dxc5 Kf6 f4 gxf3+ Kxf3 Ke5 e4',
 );

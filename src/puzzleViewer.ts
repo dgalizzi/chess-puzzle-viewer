@@ -160,7 +160,14 @@ export default class PuzzleViewer {
 
   private makeOpponentMove() {
     this.currentPuzzleMove++;
-    if (this.currentPuzzleMove >= this.puzzleMainMoves.length) {
+
+    // -1 because the puzzle might (incorrectly?) end with an
+    // opponent move, but we want the last move to be always the
+    // player move.
+    // So if at this point there is only a single move left,
+    // we skip it and end the puzzle.
+    if (this.currentPuzzleMove >= this.puzzleMainMoves.length - 1) {
+      this.endPuzzle();
       return;
     }
 
@@ -171,6 +178,9 @@ export default class PuzzleViewer {
       this.ground?.move(opponentsMove[0], opponentsMove[1]);
       this.handleMove(opponentsMove[0], opponentsMove[1], true);
       this.currentPuzzleMove++;
+      if (this.currentPuzzleMove >= this.puzzleMainMoves.length) {
+        this.endPuzzle();
+      }
     }, 200);
   }
 
@@ -304,6 +314,10 @@ export default class PuzzleViewer {
 
   private updateLegalMoves(): void {
     this.ground!.set({ movable: { dests: chessgroundDests(this.pos) } });
+  }
+
+  private endPuzzle() {
+    this.ground!.set({ movable: { dests: undefined } });
   }
 }
 
