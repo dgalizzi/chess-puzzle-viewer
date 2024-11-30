@@ -5,7 +5,7 @@ Inspired by [lichess-org/pgn-viewer](https://github.com/lichess-org/pgn-viewer/)
 The viewer leverages the following libraries:
 
 - [chessground](https://github.com/lichess-org/chessground) for rendering the board and pieces.
-- [chessops](https://github.com/niklasf/chessops) for generating legal chess moves.
+- [chessops](https://github.com/niklasf/chessops) for handling chess logic (generating legal chess moves, pgn and fen parsing).
 
 Also special thanks to:
 
@@ -15,18 +15,13 @@ Built with [Vite](https://vite.dev/).
 
 ---
 
-## Implemented Features
+## Features
 
 - **Interactive Board**: Users can play moves directly on the board, with validation for legal moves.
-- **Special Rules Support**: Includes pawn promotion and en passant capture.
+- **Special Rules Support**: Includes pawn promotion (including under promotion) and en passant capture.
+- **Load Puzzle from PGN**: Initialize the board state from a PGN-formatted puzzle.
 - **Move Validation Against PGN**: Reject incorrect user moves if they deviate from the puzzle solution.
-- **Opponent moves**: Once the player makes the correct move, the opponent's move should be made automatically.
-
----
-
-## Planned Features
-
-1. **Load Puzzle from PGN**: Initialize the board state from a PGN-formatted puzzle.
+- **Opponent moves**: Once the player makes the correct move, the opponent's move is made automatically.
 
 ---
 
