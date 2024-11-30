@@ -22,7 +22,7 @@ export default class PuzzleViewer {
   private promotionHandler: PromotionHandler;
   private puzzleMainMoves: NormalMove[];
   private currentPuzzleMove: number = 0;
-  private colorToPlay: "white" | "black";
+  private initialColorToPlay: "white" | "black";
 
   constructor(
     pgn: string,
@@ -30,38 +30,10 @@ export default class PuzzleViewer {
   ) {
     this.promotionHandler = new PromotionHandler(redraw);
 
-    const games = parsePgn(pgn);
-    const game = games[0];
-    const pos = startingPosition(game.headers).unwrap();
-    this.puzzleMainMoves = [];
-
-    for (const node of game.moves.mainline()) {
-      const move = parseSan(pos, node.san);
-      if (!move) {
-        throw new Error(`Invalid move in pgn: ${node.san}`);
-      }
-      pos.play(move);
-      this.puzzleMainMoves.push(move as NormalMove);
-    }
-
-    const initialPosition = this.getInitialPosition(game);
-    this.pos = initialPosition.pos;
-    this.colorToPlay = initialPosition.color;
-  }
-
-  private getInitialPosition(game: Game<PgnNodeData>): {
-    pos: Chess;
-    color: "white" | "black";
-  } {
-    const fen = game.headers.get("FEN");
-    let pos;
-    if (!fen) {
-      pos = Chess.fromSetup(defaultSetup()).unwrap();
-    } else {
-      const setup = parseFen(fen).unwrap();
-      pos = Chess.fromSetup(setup).unwrap();
-    }
-    return { pos: pos, color: pos.turn };
+    const game = this.getGameFromPgn(pgn);
+    this.puzzleMainMoves = this.getPuzzleMoves(game);
+    this.pos = this.getInitialPosition(game);
+    this.initialColorToPlay = this.pos.turn;
   }
 
   public setGround(cg: CgApi) {
@@ -71,7 +43,7 @@ export default class PuzzleViewer {
 
   public cgState(): Config {
     return {
-      orientation: this.colorToPlay,
+      orientation: this.initialColorToPlay,
       movable: {
         free: false,
         dests: chessgroundDests(this.pos),
@@ -107,6 +79,73 @@ export default class PuzzleViewer {
         "Trying to resolve promotion when promotion prompt is not opened",
       );
     }
+  }
+
+  public cancelPromotion() {
+    if (this.isPromotionPromptOpened()) {
+      return this.promotionHandler.promotion!.resolve(null);
+    }
+
+    throw new Error(
+      "Trying to resolve promotion when promotion prompt is not opened",
+    );
+  }
+
+  public getPromotionDest(): string {
+    if (this.isPromotionPromptOpened()) {
+      return this.promotionHandler.promotion!.dest;
+    }
+
+    throw new Error(
+      "Trying to get promotion dest when promotion prompt is not opened",
+    );
+  }
+
+  public getPromotionColor(): string {
+    if (this.isPromotionPromptOpened()) {
+      return this.promotionHandler.promotion!.color;
+    }
+
+    throw new Error(
+      "Trying to get promotion color when promotion prompt is not opened",
+    );
+  }
+
+  private getGameFromPgn(pgn: string) {
+    const games = parsePgn(pgn);
+    if (games.length > 1) {
+      throw new Error("Only PGNs with a single game are supported");
+    }
+    const game = games[0];
+    return game;
+  }
+
+  private getPuzzleMoves(game: Game<PgnNodeData>) {
+    const pos = startingPosition(game.headers).unwrap();
+    let puzzleMainMoves = [];
+
+    for (const node of game.moves.mainline()) {
+      const move = parseSan(pos, node.san);
+      if (!move) {
+        throw new Error(`Invalid move in pgn: ${node.san}`);
+      }
+      pos.play(move);
+      puzzleMainMoves.push(move as NormalMove);
+    }
+
+    return puzzleMainMoves;
+  }
+
+  private getInitialPosition(game: Game<PgnNodeData>): Chess {
+    const fen = game.headers.get("FEN");
+    let pos;
+    if (!fen) {
+      pos = Chess.fromSetup(defaultSetup()).unwrap();
+    } else {
+      const setup = parseFen(fen).unwrap();
+      pos = Chess.fromSetup(setup).unwrap();
+    }
+    return pos;
   }
 
   private isPuzzleMove(move: NormalMove) {
@@ -175,36 +214,6 @@ export default class PuzzleViewer {
     setTimeout(() => {
       this.setBoardToPosition();
     }, 300);
-  }
-
-  public cancelPromotion() {
-    if (this.isPromotionPromptOpened()) {
-      return this.promotionHandler.promotion!.resolve(null);
-    }
-
-    throw new Error(
-      "Trying to resolve promotion when promotion prompt is not opened",
-    );
-  }
-
-  public getPromotionDest(): string {
-    if (this.isPromotionPromptOpened()) {
-      return this.promotionHandler.promotion!.dest;
-    }
-
-    throw new Error(
-      "Trying to get promotion dest when promotion prompt is not opened",
-    );
-  }
-
-  public getPromotionColor(): string {
-    if (this.isPromotionPromptOpened()) {
-      return this.promotionHandler.promotion!.color;
-    }
-
-    throw new Error(
-      "Trying to get promotion color when promotion prompt is not opened",
-    );
   }
 
   private async handlePromotion(
