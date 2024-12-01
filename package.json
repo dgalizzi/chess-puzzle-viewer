@@ -1,11 +1,14 @@
 {
-  "name": "puzzle-viewer",
-  "private": true,
-  "version": "0.0.0",
+  "name": "chess-puzzle-viewer",
+  "license": "GPL-3.0-or-later",
+  "version": "0.0.1",
+  "repository": "github:dgalizzi/chess-puzzle-viewer",
+  "author": "Diego Daniel Galizzi",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base=/chess-puzzle-viewer/",
+    "build": "tsc && vite build",
+    "gh": "tsc && vite build --mode gh --base=/chess-puzzle-viewer/",
     "preview": "vite preview"
   },
   "devDependencies": {
