@@ -222,7 +222,7 @@ export default class PuzzleViewer {
       },
     ]);
     setTimeout(() => {
-      this.setBoardToPosition();
+      this.setBoardToPosition(true);
     }, 300);
   }
 
