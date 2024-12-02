@@ -181,7 +181,7 @@ export default class PuzzleViewer {
       if (this.currentPuzzleMove >= this.puzzleMainMoves.length) {
         this.endPuzzle();
       }
-    }, 200);
+    }, 300);
   }
 
   private handleMove(orig: Key, dest: Key, autoMove = false): void {
