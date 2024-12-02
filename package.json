@@ -1,7 +1,7 @@
 {
   "name": "chess-puzzle-viewer",
   "license": "GPL-3.0-or-later",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "repository": "github:dgalizzi/chess-puzzle-viewer",
   "author": "Diego Daniel Galizzi",
   "keywords": [
@@ -34,7 +34,6 @@
     "vite-plugin-dts": "^4.3.0"
   },
   "dependencies": {
-    "chess-puzzle-viewer": "file:.yalc/chess-puzzle-viewer",
     "chessground": "^9.1.1",
     "chessops": "^0.14.2",
     "snabbdom": "^3.6.2"
