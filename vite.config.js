@@ -1,5 +1,6 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
+import dts from "vite-plugin-dts";
 
 export default defineConfig(({ mode }) => {
   if (mode === "gh") {
@@ -14,6 +15,7 @@ export default defineConfig(({ mode }) => {
           name: "Chess Puzzle Viewer",
         },
       },
+      plugins: [dts()],
     };
   }
 });
