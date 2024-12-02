@@ -5,6 +5,17 @@
   "repository": "github:dgalizzi/chess-puzzle-viewer",
   "author": "Diego Daniel Galizzi",
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/chess-puzzle-viewer.umd.cjs",
+  "module": "./dist/chess-puzzle-viewer.js",
+  "exports": {
+    ".": {
+      "import": "./dist/chess-puzzle-viewer.js",
+      "require": "./dist/chess-puzzle-viewer.umd.cjs"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
