@@ -1,4 +1,4 @@
-# Chess Puzzle Viewer (WIP)
+# Chess Puzzle Viewer
 
 Inspired by [lichess-org/pgn-viewer](https://github.com/lichess-org/pgn-viewer/), **Chess Puzzle Viewer** is a widget for viewing and interacting with chess puzzles.
 

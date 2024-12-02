@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
           name: "Chess Puzzle Viewer",
         },
       },
-      plugins: [dts()],
+      plugins: [dts({ rollupTypes: true })],
     };
   }
 });

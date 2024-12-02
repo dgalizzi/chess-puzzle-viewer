@@ -122,7 +122,7 @@ export default class PuzzleViewer {
 
   private getPuzzleMoves(game: Game<PgnNodeData>) {
     const pos = startingPosition(game.headers).unwrap();
-    let puzzleMainMoves = [];
+    let puzzleMainMoves: NormalMove[] = [];
 
     for (const node of game.moves.mainline()) {
       const move = parseSan(pos, node.san);
@@ -138,7 +138,7 @@ export default class PuzzleViewer {
 
   private getInitialPosition(game: Game<PgnNodeData>): Chess {
     const fen = game.headers.get("FEN");
-    let pos;
+    let pos: Chess;
     if (!fen) {
       pos = Chess.fromSetup(defaultSetup()).unwrap();
     } else {
