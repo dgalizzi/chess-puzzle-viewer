@@ -3,7 +3,9 @@ import { defineConfig } from "vite";
 
 export default defineConfig(({ mode }) => {
   if (mode === "gh") {
-    return {};
+    return {
+      base: "/chess-puzzle-viewer/",
+    };
   } else {
     return {
       build: {

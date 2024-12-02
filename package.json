@@ -19,7 +19,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "gh": "tsc && vite build --mode gh --base=/chess-puzzle-viewer/",
+    "gh": "tsc && vite build --mode gh",
     "preview": "vite preview"
   },
   "devDependencies": {
