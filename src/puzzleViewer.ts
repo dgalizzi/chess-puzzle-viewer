@@ -7,6 +7,7 @@ import {
   defaultSetup,
   Move,
   NormalMove,
+  opposite,
   parseSquare,
   parseUci,
   Role,
@@ -23,9 +24,11 @@ export default class PuzzleViewer {
   private puzzleMainMoves: NormalMove[];
   private currentPuzzleMove: number = 0;
   private initialColorToPlay: "white" | "black";
+  private firstAutoMove: boolean = false;
 
   constructor(
     pgn: string,
+    readonly isFirstMoveBlunder: boolean,
     readonly redraw: () => void,
   ) {
     this.promotionHandler = new PromotionHandler(redraw);
@@ -33,12 +36,23 @@ export default class PuzzleViewer {
     const game = this.getGameFromPgn(pgn);
     this.puzzleMainMoves = this.getPuzzleMoves(game);
     this.pos = this.getInitialPosition(game);
-    this.initialColorToPlay = this.pos.turn;
+    this.initialColorToPlay = isFirstMoveBlunder
+      ? opposite(this.pos.turn)
+      : this.pos.turn;
+
+    this.firstAutoMove = isFirstMoveBlunder;
   }
 
   public setGround(cg: CgApi) {
     this.ground = cg;
     this.setBoardToPosition(true);
+
+    if (this.firstAutoMove) {
+      this.firstAutoMove = false;
+      setTimeout(() => {
+        this.makeOpponentMove();
+      }, 400);
+    }
   }
 
   public cgState(): Config {
@@ -46,7 +60,6 @@ export default class PuzzleViewer {
       orientation: this.initialColorToPlay,
       movable: {
         free: false,
-        dests: chessgroundDests(this.pos),
         events: {
           after: (orig, dest, _) => this.handleMove(orig, dest),
         },
@@ -70,6 +83,7 @@ export default class PuzzleViewer {
         this.handleBlunderMove(this.promotionHandler.promotion!.dest);
       } else {
         this.makeMove(move);
+        this.currentPuzzleMove++;
         this.makeOpponentMove();
       }
 
@@ -126,6 +140,7 @@ export default class PuzzleViewer {
 
     for (const node of game.moves.mainline()) {
       const move = parseSan(pos, node.san);
+      console.log(node.san);
       if (!move) {
         throw new Error(`Invalid move in pgn: ${node.san}`);
       }
@@ -159,8 +174,6 @@ export default class PuzzleViewer {
   }
 
   private makeOpponentMove() {
-    this.currentPuzzleMove++;
-
     // -1 because the puzzle might (incorrectly?) end with an
     // opponent move, but we want the last move to be always the
     // player move.
@@ -205,6 +218,7 @@ export default class PuzzleViewer {
       }
       if (this.isPuzzleMove(move)) {
         this.makeMove(move, autoMove);
+        this.currentPuzzleMove++;
         this.makeOpponentMove();
       } else {
         this.handleBlunderMove(dest);
@@ -313,7 +327,9 @@ export default class PuzzleViewer {
   }
 
   private updateLegalMoves(): void {
-    this.ground!.set({ movable: { dests: chessgroundDests(this.pos) } });
+    if (!this.firstAutoMove) {
+      this.ground!.set({ movable: { dests: chessgroundDests(this.pos) } });
+    }
   }
 
   private endPuzzle() {

@@ -8,7 +8,11 @@ import {
   eventListenersModule,
 } from "snabbdom";
 
-export default function start(element: HTMLElement, pgn: string): PuzzleViewer {
+export default function start(
+  element: HTMLElement,
+  pgn: string,
+  isFirstMoveBlunder: boolean = false,
+): PuzzleViewer {
   const patch = init([
     classModule,
     attributesModule,
@@ -16,7 +20,7 @@ export default function start(element: HTMLElement, pgn: string): PuzzleViewer {
     eventListenersModule,
   ]);
 
-  const ctrl = new PuzzleViewer(pgn, redraw);
+  const ctrl = new PuzzleViewer(pgn, isFirstMoveBlunder, redraw);
   const blueprint = view(ctrl);
   element.innerHTML = "";
   let vnode = patch(element, blueprint);
