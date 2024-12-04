@@ -140,7 +140,6 @@ export default class PuzzleViewer {
 
     for (const node of game.moves.mainline()) {
       const move = parseSan(pos, node.san);
-      console.log(node.san);
       if (!move) {
         throw new Error(`Invalid move in pgn: ${node.san}`);
       }
@@ -185,11 +184,15 @@ export default class PuzzleViewer {
     }
 
     setTimeout(() => {
-      const opponentsMove = chessgroundMove(
-        this.puzzleMainMoves[this.currentPuzzleMove],
-      );
+      const puzzleMove = this.puzzleMainMoves[this.currentPuzzleMove];
+      const opponentsMove = chessgroundMove(puzzleMove);
       this.ground?.move(opponentsMove[0], opponentsMove[1]);
-      this.handleMove(opponentsMove[0], opponentsMove[1], true);
+      this.handleMove(
+        opponentsMove[0],
+        opponentsMove[1],
+        true,
+        puzzleMove.promotion,
+      );
       this.currentPuzzleMove++;
       if (this.currentPuzzleMove >= this.puzzleMainMoves.length) {
         this.endPuzzle();
@@ -197,7 +200,12 @@ export default class PuzzleViewer {
     }, 300);
   }
 
-  private handleMove(orig: Key, dest: Key, autoMove = false): void {
+  private handleMove(
+    orig: Key,
+    dest: Key,
+    autoMove = false,
+    promotion?: Role,
+  ): void {
     const uciMove = `${orig}${dest}`;
     const move = parseUci(uciMove) as NormalMove;
     if (!move) return;
@@ -206,8 +214,18 @@ export default class PuzzleViewer {
     if (!piece) return;
 
     if (this.promotionHandler.isPromotion(dest, piece)) {
-      this.handlePromotion(dest, orig, piece, move);
-      return;
+      if (autoMove) {
+        this.promotionHandler.applyPromotion(
+          dest,
+          piece,
+          promotion!,
+          move,
+          this.ground!,
+        );
+      } else {
+        this.openPromotionPrompt(dest, orig, piece, move);
+        return;
+      }
     }
 
     this.handleEnPassant(orig, dest);
@@ -240,7 +258,7 @@ export default class PuzzleViewer {
     }, 300);
   }
 
-  private async handlePromotion(
+  private async openPromotionPrompt(
     dest: Key,
     orig: Key,
     piece: Piece,
