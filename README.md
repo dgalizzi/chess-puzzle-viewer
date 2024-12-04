@@ -33,6 +33,8 @@ Built with [Vite](https://vite.dev/).
   with the full mainline of the original game. This allow some nice features like having an analysis link
   that takes you to lichess with the full game in analysis board.
 - Custom CSS: Example showing a different board theme and pieces.
+- API: There should be an api to query/command the viewer. For example: start, stop, load new pgn, get current fen, etc.
+  Also the possibility to hook into events.
 
 ---
 
@@ -69,15 +71,21 @@ ChessPuzzleViewer(
 
 - You can get the CSS from `node_modules/chess-puzzle-viewer/dist/chess-puzzle-viewer.css`
 
-### Demo
+### Local environment
 
-To start a local development environment with a demo, run:
+To start a local development environment with a demo page, run:
 
 ```bash
 npm run dev
 ```
 
 Check `index.html`, `src/demo.ts` and `assets/demo.css` files for the demo example.
+
+---
+
+## Examples
+
+- [Lichess Daily Chess Puzzle Viewer](https://github.com/dgalizzi/daily-chess-puzzle-viewer): Play the lichess daily puzzle by fetching it from Lichess Puzzle API
 
 ---
 
