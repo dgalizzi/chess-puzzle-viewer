@@ -29,9 +29,6 @@ Built with [Vite](https://vite.dev/).
 
 - Configuration: So far nothing is configurable except the PGN. There should be at least access to Chessground configuration
   and move speed and wait times for opponent moves.
-- Puzzles where the first move is the blunder: Some puzzles PGNs include the blunder that starts the puzzle.
-  There should be an option to set this, then the first move should execute automatically. Also in this case the orientation
-  of the board comes from the position after the first move.
 - Include full game in PGN: There should be support for having an extra special header in the PGN
   with the full mainline of the original game. This allow some nice features like having an analysis link
   that takes you to lichess with the full game in analysis board.
